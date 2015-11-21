@@ -1,0 +1,21 @@
+---
+- name: Checking whether virtualbox is installed
+  shell: which -s virtualbox
+  register: vbox_installed
+  ignore_errors: True
+
+- name: Download VirtualBox
+  get_url: url=$vagrant_url dest=~/Downloads/VirtualBox.dmg
+  when: vbox_installed|failed
+
+- name: Mount VirtualBox image
+  command: hdiutil attach VirtualBox.dmg chdir=~/Downloads/
+  when: vbox_installed|failed
+
+- name: Install VirtualBox pkg
+  command: sudo installer -package /Volumes/VirtualBox/VirtualBox.pkg -target /Volumes/Macintosh\ HD
+  when: vbox_installed|failed
+
+- name: Unmount VirtualBox image
+  command: hdiutil detach /Volumes/VirtualBox/
+  when: vbox_installed|failed

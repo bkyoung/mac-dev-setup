@@ -1,0 +1,30 @@
+---
+- name: Check if Vagrant is installed
+  shell: which -s vagrant
+  register: vagrant_installed
+  ignore_errors: True
+
+- name: Download Vagrant
+  get_url: $virtualbox_url dest=~/Downloads/Vagrant.dmg
+  when: vagrant_installed|failed
+
+- name: Mount Vagrant image
+  command: hdiutil attach Vagrant.dmg chdir=~/Downloads/
+  when: vagrant_installed|failed
+
+- name: Install Vagrant pkg
+  command: sudo installer -package /Volumes/Vagrant/Vagrant.pkg -target /Volumes/Macintosh\ HD
+  when: vagrant_installed|failed
+
+- name: Unmount Vagrant image
+  command: hdiutil detach /Volumes/Vagrant/
+  when: vagrant_installed|failed
+
+- name: Checking for hostsupdater plugin
+  shell: vagrant plugin list | grep hostsupdater
+  register: hostsupdater_plugin_installed
+  ignore_errors: True
+  
+- name: Install hostsupdater plugin
+  shell: vagrant plugin install hostsupdater
+  when: hostsupdater_plugin_installed|failed
