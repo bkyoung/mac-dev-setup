@@ -5,6 +5,8 @@ PROJECT_DIR=$(dirname $0)
 install_brew(){
   echo "[Installing Homebrew] *********************************************************"
   ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  brew update
+  brew tap caskroom/cask
 }
 
 install_python(){
