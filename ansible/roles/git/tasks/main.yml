@@ -1,8 +1,0 @@
----
-- name: Check if git git installed
-  shell: which -s git
-  register: git_installed
-
-- name: Install git
-  homebrew: name=git state=present
-  when: git_installed|failed

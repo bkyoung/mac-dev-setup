@@ -1,6 +1,0 @@
----
-- hosts: local
-  roles:
-    - virtualbox
-    - vagrant
-    - git

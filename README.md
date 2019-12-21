@@ -1,15 +1,24 @@
-# OS X Quickstart
-Running `./bootstrap.sh` on a fresh install of OS X will result in the following end-state:
+# macOS Quickstart
+Running `./mac-dev-setup.sh` on a fresh install of macOS will result in the following end-state:
 
 1. Homebrew installed
-1. Python 2 installed
-1. Ansible installed
-1. An Ansible playbook will run which installs:
+1. GNU Bash + core utils
+  - Default shell for user switched to bash
+  - passwordless sudo
+1. Python 3 installed
+1. Go installed
+1. Several Useful tools:
   - Virtualbox
   - Vagrant
-  - Vagrant plugin hostsmanager
+  - Visual Studio Code
   - Git
-
-If some or all of the above tools are installed, a small effort is made to accommodate the situation and not stomp your existing setup.  However, we are only checking for the existence of a tool, not explicitly for a specific version.  If any version of a particular tool exists, we simply move on.
-
-In the case of Vagrant or Virtualbox, if missing, predetermined versions (defined by the respective download url in the `vars` directory) will be downloaded and installed.
+  - Slack
+  - Google Chrome
+  - Docker
+  - Packer
+  - Terraform
+  - Consul
+  - Vault
+  - Nomad
+  - AWS cli
+  - Drone cli
