@@ -82,3 +82,5 @@ if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
 fi
 GIT
 
+# Turn off scrollbars in Terminal.app
+defaults write com.apple.Terminal AppleShowScrollBars -string WhenScrolling
