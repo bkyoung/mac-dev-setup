@@ -59,6 +59,8 @@ brew cask install docker
 
 # Install my essential free & open source tools
 brew install git
+brew install bash-git-prompt
+brew install bash-completion
 brew install packer
 brew install terraform
 brew install consul
@@ -67,3 +69,16 @@ brew install nomad
 brew install go
 brew tap drone/drone && brew install drone
 pip3 install awscli
+
+# Add git bash-completion to shell profile
+echo '[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"' >> ~/.bash_profile
+
+# Add fancy git bash prompt when in repos
+cat <<GIT >> ~/.bash_profile
+if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+  __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
+  GIT_PROMPT_ONLY_IN_REPO=1
+  source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
+fi
+GIT
+
