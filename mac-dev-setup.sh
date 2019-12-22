@@ -46,11 +46,15 @@ sudo chmod 0400 /private/etc/sudoers.d/$ME
 brew cask install clamxav
 brew cask install transmit
 brew cask install google-chrome
+set +e # The next command will probably fail the first time ...
 brew cask install visual-studio-code
+set -e
 sudo spctl --add /Applications/Visual\ Studio\ Code.app
 brew cask install visual-studio-code # Because it fails the first time, until you add the gatekeeper exception
 brew cask install slack
+set +e # The next command will probably fail the first time ...
 brew cask install virtualbox
+set -e
 sudo spctl --add /Applications/VirtualBox.app
 brew cask install virtualbox # Because it fails the first time, until you add the gatekeeper exception
 brew cask install virtualbox-extension-pack
