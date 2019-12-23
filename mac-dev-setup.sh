@@ -6,7 +6,7 @@ set -e
 sudo spctl --master-disable
 
 # Install homebrew if it's not already installed
-type brew &>2 > /dev/null || /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+type brew &> /dev/null || /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
 # Setting up a gnu-ish macOS environment, for those of us who work in
 # Linux all day from a Mac and just can't stand zsh ...
