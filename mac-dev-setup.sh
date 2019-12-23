@@ -2,6 +2,9 @@
 
 set -e
 
+# Temporarily disable gatekeeper to prevent installations from failing
+sudo spctl --master-disable
+
 # Install homebrew if it's not already installed
 type brew &>2 > /dev/null || /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
@@ -46,17 +49,9 @@ sudo chmod 0400 /private/etc/sudoers.d/$ME
 brew cask install clamxav
 brew cask install transmit
 brew cask install google-chrome
-set +e # The next command will probably fail the first time ...
 brew cask install visual-studio-code
-set -e
-sudo spctl --add /Applications/Visual\ Studio\ Code.app
-brew cask install visual-studio-code # Because it fails the first time, until you add the gatekeeper exception
 brew cask install slack
-set +e # The next command will probably fail the first time ...
 brew cask install virtualbox
-set -e
-sudo spctl --add /Applications/VirtualBox.app
-brew cask install virtualbox # Because it fails the first time, until you add the gatekeeper exception
 brew cask install virtualbox-extension-pack
 brew cask install vagrant
 brew cask install docker
@@ -73,6 +68,11 @@ brew install nomad
 brew install go
 brew tap drone/drone && brew install drone
 pip3 install awscli
+
+# Re-enable gatekeeper
+sudo spctl --master-enable
+sudo spctl --add /Applications/Visual\ Studio\ Code.app
+sudo spctl --add /Applications/VirtualBox.app
 
 # Add git bash-completion to shell profile
 echo '[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"' >> ~/.bash_profile
