@@ -2,9 +2,21 @@
 
 set -e
 
+# usage
+usage(){
+    echo ""
+    echo "$0 [  [-i|--install] | [-u|--upgrade]  ]"
+    echo ""
+    exit 1
+}
+
 # helper function for installing a package via brew
 brew_pkg(){
-    brew install $1
+    if brew ls --versions $1 > /dev/null; then
+        brew upgrade $1
+    else
+        brew install $1
+    fi
 }
 
 # helper function for installing a package via brew cask
@@ -20,58 +32,138 @@ brew_tap(){
     brew_pkg $PKG
 }
 
+# Main
+key="$1"
+
+case $key in
+    -i|--install)
+    MODE="install"
+    ;;
+    -u|--upgrade)
+    MODE="upgrade"
+    ;;
+    *)
+    usage
+    ;;
+esac
+
 # Temporarily disable gatekeeper to prevent installations from failing
 sudo spctl --master-disable
 
 # Install homebrew if it's not already installed
 type brew &> /dev/null || /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 
+if [ "$MODE" == "upgrade" ]; then
+    brew update
+    brew cleanup
+    brew update-reset
+fi
+
 # Install packages
 BREW_PKGS=(
-  coreutils
+  ansible
+  asciinema
+  aspell
+  awless
+  aws-shell
+  awscli
+  awslogs
   bash
-  bash-git-prompt
   bash-completion
+  bash-git-prompt
   binutils
+  brew-cask-completion
+  consul
+  coreutils
+  cowsay
+  curl
+  datamash
   diffutils
   ed
   findutils
   gawk
+  gist
+  git
+  git-crypt
+  git-extras
+  glide
   gnu-indent
   gnu-sed
   gnu-tar
+  gnu-time
   gnu-which
+  gnuplot
   gnutls
+  go
+  gpg
   grep
   gzip
+  haste-client
+  htop
+  hub
+  iftop
+  imagemagick
+  ipcalc
+  iperf3
+  iproute2mac
+  irssi
+  jp
+  jq
+  kubectl
+  kubespy
+  lastpass-cli
+  less
+  lolcat
+  macvim
+  mtr
+  neofetch
+  nmap
+  nomad
+  p7zip
+  packer
+  psgrep
+  pstree
+  psutils
+  pv
+  python3
+  readline
   screen
+  speedtest-cli
+  stern
+  stress
+  terraform
+  terraform_landscape
+  tree
+  vagrant-completion
+  vault
+  virt-viewer
   watch
   wdiff
   wget
-  go
-  python3
-  git
-  packer
-  terraform
-  consul
-  vault
-  nomad
-  awscli
-  jq
+  yq
 )
 for pkg in ${BREW_PKGS[@]};do brew_pkg $pkg;done
 
 # Install casks
 BREW_CASKS=(
+  calibre
   clamxav
-  transmit
-  google-chrome
-  visual-studio-code
-  slack
-  virtualbox
-  virtualbox-extension-pack
-  vagrant
+  discord
   docker
+  docker-toolbox
+  fing
+  firefox
+  google-chrome
+  keybase
+  pingplotter
+  postman
+  slack
+  spectacle
+  transmit
+  vagrant
+  virtualbox
+  #virtualbox-extension-pack
+  visual-studio-code
 )
 for cask in ${BREW_CASKS[@]};do brew_cask $cask;done
 
@@ -79,6 +171,9 @@ for cask in ${BREW_CASKS[@]};do brew_cask $cask;done
 # FORMAT: <tap_url_or_github_repo>,<pkg_name>
 BREW_TAPS=(
   drone/drone,drone
+  jmespath/jmespath,jp
+  johanhaleby/kubetail,kubetail
+  wallix/awless,awless
 )
 for tap in ${BREW_TAPS[@]};do
   TAP=$(echo $tap | cut -d, -f1)
@@ -86,37 +181,41 @@ for tap in ${BREW_TAPS[@]};do
   brew_tap $TAP $PKG
 done
 
-# Make sure you get all the PATH elements into ~/.bash_profile.
-# You may still need to manually tweak things to your liking.
-echo 'PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/binutils/bin:/usr/local/opt/gettext/bin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/ed/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-indent/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/gnu-which/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:${HOME}/Library/Python/3.7/bin:$PATH"' >> ~/.bash_profile_path_gnu
+if [ "$MODE" == "install" ]; then
+    # Make sure you get all the PATH elements into ~/.bash_profile.
+    # You may still need to manually tweak things to your liking.
+    echo 'PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/binutils/bin:/usr/local/opt/gettext/bin:/usr/local/opt/gnu-getopt/bin:/usr/local/opt/ed/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-indent/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/gnu-which/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:${HOME}/Library/Python/3.7/bin:$PATH"' >> ~/.bash_profile_path_gnu
 
-# Add our shiny new shell to the list of approved shells in macOS
-grep -q "/usr/local/bin/bash" /etc/shells || echo '/usr/local/bin/bash' | sudo tee -a /etc/shells
+    # Add our shiny new shell to the list of approved shells in macOS
+    grep -q "/usr/local/bin/bash" /etc/shells || echo '/usr/local/bin/bash' | sudo tee -a /etc/shells
 
-# Switch to our new shell permanently
-chsh -s /usr/local/bin/bash
+    # Switch to our new shell permanently
+    chsh -s /usr/local/bin/bash
 
-# I'm too good to constantly type my password ...
-ME=$(whoami)
-echo "$ME   ALL = (ALL) NOPASSWD:ALL" | sudo tee -a /private/etc/sudoers.d/$ME
-sudo chmod 0400 /private/etc/sudoers.d/$ME
+    # I'm too good to constantly type my password ...
+    ME=$(whoami)
+    echo "$ME   ALL = (ALL) NOPASSWD:ALL" | sudo tee -a /private/etc/sudoers.d/$ME
+    sudo chmod 0400 /private/etc/sudoers.d/$ME
+fi
 
 # Re-enable gatekeeper
 sudo spctl --master-enable
 sudo spctl --add /Applications/Visual\ Studio\ Code.app
 sudo spctl --add /Applications/VirtualBox.app
 
-# Add git bash-completion to shell profile
-echo '[[ -r "/usr/local/etc/bash_completion.d/git-completion.bash" ]] && . "/usr/local/etc/bash_completion.d/git-completion.bash"' >> ~/.bash_profile
+if [ "$MODE" == "install" ]; then
+    # Add git bash-completion to shell profile
+    echo '[[ -r "/usr/local/etc/bash_completion.d/git-completion.bash" ]] && . "/usr/local/etc/bash_completion.d/git-completion.bash"' >> ~/.bash_profile
 
-# Add fancy bash prompt when in git repos
-cat <<GIT >> ~/.bash_profile
-if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
-  __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
-  GIT_PROMPT_ONLY_IN_REPO=1
-  source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
+    # Add fancy bash prompt when in git repos
+    cat <<'    GIT' >> ~/.bash_profile
+    if [ -f "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh" ]; then
+      __GIT_PROMPT_DIR=$(brew --prefix)/opt/bash-git-prompt/share
+      GIT_PROMPT_ONLY_IN_REPO=1
+      source "$(brew --prefix)/opt/bash-git-prompt/share/gitprompt.sh"
+    fi
+    GIT
+
+    # Turn off scrollbars in Terminal.app
+    defaults write com.apple.Terminal AppleShowScrollBars -string WhenScrolling
 fi
-GIT
-
-# Turn off scrollbars in Terminal.app
-defaults write com.apple.Terminal AppleShowScrollBars -string WhenScrolling
