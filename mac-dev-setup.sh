@@ -50,6 +50,7 @@ BREW_PKGS=(
   wget
   go
   python3
+  node
   git
   packer
   terraform
@@ -59,12 +60,10 @@ BREW_PKGS=(
   awscli
   jq
 )
-for pkg in ${BREW_PKGS[@]};do brew_pkg $pkg;done
+for pkg in "${BREW_PKGS[@]}";do brew_pkg $pkg;done
 
 # Install casks
 BREW_CASKS=(
-  clamxav
-  transmit
   google-chrome
   visual-studio-code
   slack
@@ -73,14 +72,15 @@ BREW_CASKS=(
   vagrant
   docker
 )
-for cask in ${BREW_CASKS[@]};do brew_cask $cask;done
+for cask in "${BREW_CASKS[@]}";do brew_cask $cask;done
 
 # Install taps
 # FORMAT: <tap_url_or_github_repo>,<pkg_name>
 BREW_TAPS=(
   drone/drone,drone
+  aws/tap,aws-sam-cli
 )
-for tap in ${BREW_TAPS[@]};do
+for tap in "${BREW_TAPS[@]}";do
   TAP=$(echo $tap | cut -d, -f1)
   PKG=$(echo $tap | cut -d, -f2)
   brew_tap $TAP $PKG
