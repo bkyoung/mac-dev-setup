@@ -71,6 +71,7 @@ BREW_CASKS=(
   virtualbox-extension-pack
   vagrant
   docker
+  postman
 )
 for cask in "${BREW_CASKS[@]}";do brew_cask $cask;done
 
